@@ -1,0 +1,229 @@
+{% load main_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <title>Title</title>
+</head>
+<body>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="demo" height="{{ TheHeight }}" width="{{ TheWidth }}">
+            {% for Node in Nodes %}
+
+                    {% if Node.cx == ReachNode.cx and Node.cy == ReachNode.cy %}
+                        <circle cx="{{ Node.cx }}" cy="{{ Node.cy }}" r="10" fill="blue"></circle>
+                    {% elif Node.cx == Start_Node.cx and Node.cy == Start_Node.cy %}
+                        <circle cx="{{ Node.cx }}" cy="{{ Node.cy| add:"5" }}" r="10" fill="tomato"></circle>
+                        <text class="TxT" x="{{ Node.cx| add:"-7" }}" y="{{ Node.cy| add:"9" }}" fill="white" font-size="15px">S</text>
+                    {% elif Node.cx == End_Node.cx and Node.cy == End_Node.cy %}
+                        <circle cx="{{ Node.cx }}" cy="{{ Node.cy }}" r="10" fill="tomato"></circle>
+                        <text class="TxTx" x="{{ Node.cx| add:"-5" }}" y="{{ Node.cy| add:"5" }}" fill="white" font-size="15px">E</text>
+                    {% else %}
+                        <circle cx="{{ Node.cx }}" cy="{{ Node.cy }}" r="5" fill="red"></circle>
+                    {% endif %}
+
+                {% for item in Node.relevant %}
+                    {% for tuple in edgeList %}
+                            {% if item.cx == tuple.0.cx and item.cy == tuple.0.cy and Node.cx == tuple.1.cx and Node.cy == tuple.1.cy or item.cx == tuple.1.cx and item.cy == tuple.1.cy and Node.cx == tuple.0.cx and Node.cy == tuple.0.cy  %}
+
+{#                                {% if Node.StartFlag == True and item.cx == ReachNode.cx and item.cy == ReachNode.cy or Node.EndFlag == True and item.cx == ReachNode.cx and item.cy == ReachNode.cy %}#}
+
+{#                                   Reach Node#}
+                                {% if Node.cx == ReachNode.cx and Node.cy == ReachNode.cy and item.StartFlag == True or Node.cx == ReachNode.cx and Node.cy == ReachNode.cy and item.EndFlag == True %}
+                                    <line class="Redy {{Node.iteration | minimum:item.iteration}}" style="animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s; animation-name: unset;" x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{item.cy}}"></line>
+
+{#                                    Start Node#}
+                                {% elif Node.StartFlag == True and item.cx != ReachNode.cx and item.cy != ReachNode.cy %}
+                                    <line class="Violety {{Node.iteration | minimum:item.iteration}}" style="animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s; animation-name: unset;" x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{item.cy}}"></line>
+
+{#                                    End Node#}
+                                {% elif Node.EndFlag == True and item.StartFlag == False %}
+                                    <line class="Bluey {{Node.iteration | minimum:item.iteration}}" style="animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s; animation-name: unset;" x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{item.cy}}"></line>
+
+                                {% elif item.cx != ReachNode.cx and item.cy != ReachNode.cy %}
+                                    <line x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{item.cy}}"></line>
+                                {% endif %}
+
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+            {% endfor %}
+        </svg>
+
+
+<button onclick="JackOff()">Forward</button>
+<button onclick="JackOffed()">Backward</button>
+
+{#<script>#}
+{#    function Smith() {#}
+{#        var style = document.createElement('style');#}
+{#        style.type = 'text/css';#}
+{#        style.innerHTML = '.cssClass { animation-name: TheAnime; ' +#}
+{#                                      'animation-duration: 2s; ' +#}
+{#                                      'animation-iteration-count: inherit;' +#}
+{#                                      'animation-fill-mode: forwards;' +#}
+{#                                      'animation-direction: normal;' +#}
+{#                                      'animation-delay: {{forloop.counter | multiply:2}}s; }';#}
+{#        document.getElementsByTagName('head')[0].appendChild(style);#}
+{##}
+{#        document.getElementById('someElementId').className = 'cssClass';#}
+{#    }#}
+{#</script>#}
+{#createCSSSelector('.TheId{{ forloop.counter }}', '  animation-name: TheAnime;#}
+{#                                                    animation-duration: 2s;#}
+{#                                                    animation-iteration-count: inherit;#}
+{#                                                    animation-fill-mode: forwards;#}
+{#                                                    animation-delay: {{forloop.counter | multiply:2}}s;#}
+{#                                                    animation-direction: normal;');#}
+{#    <script>#}
+{#        function createCSSSelector (selector, style) {#}
+{#          if (!document.styleSheets) return;#}
+{#          if (document.getElementsByTagName('head').length == 0) return;#}
+{##}
+{#          var styleSheet,mediaType;#}
+{##}
+{#          if (document.styleSheets.length > 0) {#}
+{#            for (var i = 0, l = document.styleSheets.length; i < l; i++) {#}
+{#              if (document.styleSheets[i].disabled)#}
+{#                continue;#}
+{#              var media = document.styleSheets[i].media;#}
+{#              mediaType = typeof media;#}
+{##}
+{#              if (mediaType === 'string') {#}
+{#                if (media === '' || (media.indexOf('screen') !== -1)) {#}
+{#                  styleSheet = document.styleSheets[i];#}
+{#                }#}
+{#              }#}
+{#              else if (mediaType=='object') {#}
+{#                if (media.mediaText === '' || (media.mediaText.indexOf('screen') !== -1)) {#}
+{#                  styleSheet = document.styleSheets[i];#}
+{#                }#}
+{#              }#}
+{##}
+{#              if (typeof styleSheet !== 'undefined')#}
+{#                break;#}
+{#            }#}
+{#          }#}
+{##}
+{#          if (typeof styleSheet === 'undefined') {#}
+{#            var styleSheetElement = document.createElement('style');#}
+{#            styleSheetElement.type = 'text/css';#}
+{#            document.getElementsByTagName('head')[0].appendChild(styleSheetElement);#}
+{##}
+{#            for (i = 0; i < document.styleSheets.length; i++) {#}
+{#              if (document.styleSheets[i].disabled) {#}
+{#                continue;#}
+{#              }#}
+{#              styleSheet = document.styleSheets[i];#}
+{#            }#}
+{##}
+{#            mediaType = typeof styleSheet.media;#}
+{#          }#}
+{##}
+{#          if (mediaType === 'string') {#}
+{#            for (var i = 0, l = styleSheet.rules.length; i < l; i++) {#}
+{#              if(styleSheet.rules[i].selectorText && styleSheet.rules[i].selectorText.toLowerCase()==selector.toLowerCase()) {#}
+{#                styleSheet.rules[i].style.cssText = style;#}
+{#                return;#}
+{#              }#}
+{#            }#}
+{#            styleSheet.addRule(selector,style);#}
+{#          }#}
+{#          else if (mediaType === 'object') {#}
+{#            var styleSheetLength = (styleSheet.cssRules) ? styleSheet.cssRules.length : 0;#}
+{#            for (var i = 0; i < styleSheetLength; i++) {#}
+{#              if (styleSheet.cssRules[i].selectorText && styleSheet.cssRules[i].selectorText.toLowerCase() == selector.toLowerCase()) {#}
+{#                styleSheet.cssRules[i].style.cssText = style;#}
+{#                return;#}
+{#              }#}
+{#            }#}
+{#            styleSheet.insertRule(selector + '{' + style + '}', styleSheetLength);#}
+{#          }#}
+{#        }#}
+{#    </script>#}
+
+        <script>
+            let move=0;
+            let ClassName;
+            function JackOff() {
+                move++;
+                ClassName = document.getElementsByClassName(move.toString());
+                for (i = 0; i < ClassName.length; i++) {
+                    ClassName[i].style.animationName = null
+                }
+            }
+
+            function JackOffed() {
+                if (move<1)
+                    alert("No Can Do!");
+                else
+                    ClassName = document.getElementsByClassName(move.toString());
+                    move--;
+                    for (i = 0; i < ClassName.length; i++) {
+                        ClassName[i].style.animationName = "unset";
+                }
+            }
+        </script>
+
+
+
+        <script>
+            let svg = document.querySelector("svg");
+            let circle = document.querySelectorAll("circle");
+
+            let i = circle.length;
+            while(i--) {
+                svg.appendChild(circle[i]);
+                        }
+            let x = document.getElementsByClassName("TxT");
+            svg.appendChild(x[0]);
+            let y = document.getElementsByClassName("TxTx");
+            svg.appendChild(y[0]);
+        </script>
+
+        <script>
+            function onlyUnique(value, index, self) {
+                return self.indexOf(value) === index;
+            }
+            let Redy = document.getElementsByClassName("Redy");
+            let line = document.querySelectorAll("line");
+            let RLen = Redy.length;
+            let LLen = line.length;
+            let Array = [];
+            for (i = 0; i < RLen; i++) {
+                Array.push(parseInt(Redy[i].style.animationDelay))
+            }
+            Array.sort(function(a, b){return a - b});
+            Array.filter( onlyUnique );
+
+
+            let R = Array.reverse();
+
+             for (i = 0; i < RLen; i++) {
+                if (parseInt(Redy[RLen].style.animationDelay) !== parseInt(R[0]))
+                Redy[RLen].style.removeProperty("animation-name")
+            }
+
+            while (LLen--) {
+                if (parseInt(line[LLen].style.animationDelay) > R[0])
+                    line[LLen].parentNode.removeChild(line[LLen]);
+            }
+
+
+
+
+            {#let mini = parseInt(Redy[0].style.animationDelay);#}
+            {#while(RLen>1) {#}
+            {#    if (parseInt(Redy[RLen].style.animationDelay) > mini) {#}
+            {#        Redy[RLen].parentNode.removeChild(Redy[RLen]);#}
+            {#        RLen--;#}
+            {#    }#}
+            {##}
+            {#    else if (parseInt(Redy[RLen].style.animationDelay) < mini)#}
+            {#        mini = parseInt(Redy[RLen].style.animationDelay);#}
+            {#           }#}
+            {#var second = intArray.sort(function(a,b){return b-a})[1];#}
+        </script>
+</body>
+</html>

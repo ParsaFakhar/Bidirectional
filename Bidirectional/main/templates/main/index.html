@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<form id="myBtn" action="{% url 'posted' %}" method="post" autocomplete="on">
+    {% csrf_token %}
+
+    <label for="post_form">
+                Enter How Many Nodes You Need:
+    </label>
+        <input id="myInput" type="text" name="post_form" value="50" autofocus>
+        <input type="hidden" name="TheWidth" value="">
+        <input type="hidden" name="TheHeight" value="">
+
+        <input type="submit" value="Submit">
+
+</form>
+
+<script>
+        document.getElementsByName('TheWidth')[0].value= window.innerWidth;
+        document.getElementsByName('TheHeight')[0].value= window.innerHeight;
+
+</script>
+
+<script>
+let input = document.getElementById("myInput");
+input.addEventListener("keydomn", function(event) {
+  if (event.key === "Enter") {
+   event.preventDefault();
+   document.getElementById("myBtn").submit();
+
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+{% load main_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'main/mcleod-reset.css' %}">
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <title>Title</title>
+</head>
+<body>
+
+
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="demo" height="{{ TheHeight }}" width="{{ TheWidth }}">
+            {% for Node in Nodes %}
+
+                    <circle cx="{{ Node.cx }}" cy="{{ Node.cy }}" r="5" fill="red" onclick="myFunction(event)"></circle>
+
+                {% for item in Node.relevant %}
+                {% for tuple in edgeList %}
+                        {% if item.cx == tuple.0.cx and item.cy == tuple.0.cy and Node.cx == tuple.1.cx and Node.cy == tuple.1.cy or item.cx == tuple.1.cx and item.cy == tuple.1.cy and Node.cx == tuple.0.cx and Node.cy == tuple.0.cy  %}
+                              <line x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{item.cy}}" style="stroke:rgb(0,255,0);stroke-width:1"> </line>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+
+            {% endfor %}
+        </svg>
+
+
+<form action="{% url 'bfs' %}" method="post">
+    {% csrf_token %}
+
+    <label for="post_form">
+                Select 2 Nodes for Bidirectional Algorithm to Start
+    </label>
+{#        <input type="text" name="post_form" value="3">#}
+        <input type="hidden" name="Node1X" value="">
+        <input type="hidden" name="Node1Y" value="">
+        <input type="hidden" name="Node2X" value="">
+        <input type="hidden" name="Node2Y" value="">
+
+        <input type="submit" value="Submit">
+
+</form>
+
+        <script>
+            let repeat=0;
+            function myFunction(evt){
+                if (repeat===0) {
+                    evt.target.setAttribute("fill", "purple");
+                    repeat++;
+                    document.getElementsByName('Node1X')[0].value= evt.target.getAttribute("cx");
+                    document.getElementsByName('Node1Y')[0].value= evt.target.getAttribute("cy");
+
+                }
+                else if(repeat===1){
+                    evt.target.setAttribute("fill", "purple");
+                    repeat++;
+                    document.getElementsByName('Node2X')[0].value= evt.target.getAttribute("cx");
+                    document.getElementsByName('Node2Y')[0].value= evt.target.getAttribute("cy");
+
+                }
+                else{
+                    alert("sorry only TWO item are allowed to be selected")
+                }
+            }
+        </script>
+{#    <svg id="border" class="demo" xmln="http://www.w3.org/2000/svg"#}
+{#         height="{{ TheHeight }}"#}
+{#         width="{{ TheWidth }}">#}
+{##}
+{#      <line x1="0" y1="0" x2="900" y2="900" style="stroke:rgb(255,0,0);stroke-width:1"> </line>#}
+{#      <line x1="0" y1="0" x2="400" y2="600" style="stroke:rgb(225,255,0);stroke-width:1"> </line>#}
+{##}
+{#    </svg>#}
+
+{#        <script>#}
+{#            $(document).ready(function() {#}
+{##}
+{#    $("form[method=post]").submit(function(event) {#}
+{#        var form = this;#}
+{#        $.get("csrf-token", function(content) {#}
+{#            $(form).find("input[name=_csrf]").val(content);#}
+{#            form.submit();#}
+{#        });#}
+{#        event.preventDefault();#}
+{#    }); });#}
+{#        </script>#}
+
+
+{#        <script>#}
+{#            let svg = document.querySelector("svg");#}
+{#            let circle = document.querySelectorAll("circle");#}
+{##}
+{#            let i = circle.length;#}
+{#            while(i--) {#}
+{#              svg.appendChild(circle[i]);#}
+{#                        }#}
+{#        </script>#}
+                <script>
+            let svg = document.querySelector("svg");
+            let circle = document.querySelectorAll("circle");
+
+            let i = circle.length;
+            while(i--) {
+                svg.appendChild(circle[i]);
+                        }
+        </script>
+
+{#        <script>#}
+{#            let svg = document.querySelector("svg");#}
+{#            let circle = document.querySelectorAll("circle");#}
+{##}
+{#            let i = circle.length;#}
+{#            while(i--) {#}
+{#              circle[i].addEventListener("mouseenter", function(e) {#}
+{#                svg.appendChild(e.target);#}
+{#                          });#}
+{#                        }#}
+{#        </script>#}
+
+</body>
+</html>

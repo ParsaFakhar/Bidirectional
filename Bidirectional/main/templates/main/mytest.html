@@ -1,0 +1,61 @@
+{% load main_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    <title>Title</title>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="demo" height="{{ TheHeight }}"
+     width="{{ TheWidth }}">
+    {% for Node in Nodes %}
+
+        {% if Node.cx == ReachNode.cx and Node.cy == ReachNode.cy %}
+            <circle cx="{{ Node.cx }}" cy="{{ Node.cy }}" r="10" fill="blue"></circle>
+        {% else %}
+            <circle cx="{{ Node.cx }}" cy="{{ Node.cy }}" r="10" fill="red"></circle>
+        {% endif %}
+
+        {% for item in Node.relevant %}
+            {% for tuple in edgeList %}
+                {% if item.cx == tuple.0.cx and item.cy == tuple.0.cy and Node.cx == tuple.1.cx and Node.cy == tuple.1.cy or item.cx == tuple.1.cx and item.cy == tuple.1.cy and Node.cx == tuple.0.cx and Node.cy == tuple.0.cy %}
+
+                    {% if Node.StartFlag == True and item.cx == ReachNode.cx and item.cy == ReachNode.cy or Node.EndFlag == True and item.cx == ReachNode.cx and item.cy == ReachNode.cy %}
+                        <line style="animation-delay: {{ Node.iteration | minimum:item.iteration }}s; animation-name: ReachRed; animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s;"
+                              x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{ item.cy }}"></line>
+                    {% elif Node.StartFlag == True %}
+                        <line style="animation-delay: {{ Node.iteration | minimum:item.iteration }}s; animation-name: StartViolet; animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s;"
+                              x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{ item.cy }}"></line>
+                    {% elif Node.EndFlag == True or item.EndFlag == True %}
+                        <line style="animation-delay: {{ Node.iteration | minimum:item.iteration }}s; animation-name: EndBlue; animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s;"
+                              x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{ item.cy }}"></line>
+                    {% else %}
+                        <line x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{ item.cy }}"></line>
+                    {% endif %}
+
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+</svg>
+
+
+
+
+
+                        {% for SQN in StartNodeQuery%}
+                            {% for Node in SQN.relevant %}
+                                {% for tuple in edgeList %}
+                                    {% if Node.cx == tuple.0.cx and Node.cy == tuple.0.cy and Start_Node.cx == tuple.1.cx and Start_Node.cy == tuple.1.cy or Node.cx == tuple.1.cx and Node.cy == tuple.1.cy and Start_Node.cx == tuple.0.cx and Start_Node.cy == tuple.0.cy %}
+                                        <line style="animation-delay: {{ Node.iteration | minimum:item.iteration }}s; animation-name: StartViolet; animation-direction: normal; animation-fill-mode: forwards; animation-iteration-count: inherit; animation-duration: 2s;"
+                                              x1="{{ Node.cx }}" y1="{{ Node.cy }}" x2="{{ item.cx }}" y2="{{ item.cy }}"></line>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+
+
+</body>
+</html>
